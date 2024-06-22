@@ -12,10 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('comments', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+          $table->id();
+          $table->foreignId('post_id')->constrained()->onDelete('cascade');
+          $table->string('author', length: 255);
+          $table->text('body');
+          $table->boolean('published')->default(false);
+          $table->timestamps('');
+      });
     }
+    
 
     /**
      * Reverse the migrations.
