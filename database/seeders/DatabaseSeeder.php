@@ -9,7 +9,9 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\Comment;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,6 +25,10 @@ class DatabaseSeeder extends Seeder
         Category::create(['title' => 'JavaScript']);
         Category::create(['title' => 'Vue.js']);
         Category::create(['title' => 'React']);
+        // add Javascript and CSS to list of categories
+        Category::create(['title' => 'CSS']);       
+        $javascriptCategory = Category::where('title', 'Javascript')->first();
+        $cssCategory = Category::where('title', 'CSS')->first();
 
         $laravel_category = Category::where('title', 'Laravel')->first();
         $php_category = Category::where('title', 'PHP')->first();
@@ -53,8 +59,36 @@ class DatabaseSeeder extends Seeder
 
         //we are using model relationship to add comments
         $post->comments()->createMany([
-            ['body' => 'This is a great post.', 'author' => 'John Doe'],
+            ['body' => 'This is a great post...', 'author' => 'John Doe'],
             ['body' => 'I love Laravel.', 'author' => 'Jane Doe'],
+        ]);
+
+        // Add a new blog post to the Javascript category
+        $javascriptPost = new Post();
+        $javascriptPost->title = 'Understanding Async/Await in JavaScript';
+        $javascriptPost->author = 'Jane Developer';
+        $javascriptPost->body = 'Async/Await simplifies asynchronous programming in JavaScript.';
+        $javascriptPost->category_id = $javascriptCategory->id;
+        $javascriptPost->save();
+        $javascriptPost->comments()->createMany([
+            ['body' => 'This is a great post.','author' => 'John Doe'],
+        ]); 
+        // Comment::factory()->count(1)->create([
+        //     'post_id' => $javascriptPost->id,
+        //     'body' => 'This is a great js post.',
+        //     'author' => 'John Doe',
+        // ]);
+
+        // Add a new blog post to the CSS category
+        $cssPost = new Post();
+        $cssPost->title = 'Mastering Flexbox for Responsive Design';
+        $cssPost->author = 'John Designer';
+        $cssPost->body = 'Flexbox is a powerful layout tool for designing responsive websites.';
+        $cssPost->category_id = $cssCategory->id;
+        $cssPost->save();
+        Comment::factory()->count(75)->create([
+            // 'body' => $faker->paragraph,
+            // 'author' => $faker->name,
         ]);
     }
 }
